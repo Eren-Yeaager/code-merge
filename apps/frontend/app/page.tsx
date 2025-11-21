@@ -30,7 +30,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button asChild size="lg" className="text-lg px-8 py-6">
-              <Link href="/dashboard">
+              <Link href={`${process.env.NEXT_PUBLIC_API_URL}`}>
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
@@ -118,7 +118,7 @@ export default function Home() {
               variant="secondary"
               className="text-lg px-8 py-6"
             >
-              <Link href="/dashboard">
+              <Link href={`${process.env.NEXT_PUBLIC_API_URL}`}>
                 Sign in with GitHub
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
