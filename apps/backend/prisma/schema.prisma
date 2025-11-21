@@ -4,10 +4,111 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url= env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
+
 model User {
+  id          String   @id @default(cuid())
+  githubId    Int      @unique
+  githubLogin String
+  name        String?
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  repos     Repo[]
+  trades    Trade[]
+  positions Position[]
+  balance   Balance?
+}
+
+model Repo {
   id        String   @id @default(cuid())
   githubId  Int      @unique
+  fullName  String
+  name      String
+  owner     String
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pullRequests PullRequest[]
+}
+
+model PullRequest {
+  id        String    @id @default(cuid())
+  githubId  Int       @unique
+  number    Int
+  title     String
+  state     String
+  url       String
+  createdAt DateTime
+  updatedAt DateTime
+  mergedAt  DateTime?
+  closedAt  DateTime?
+
+  repoId String
+  repo   Repo    @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  market Market?
+}
+
+model Market {
+  id              String    @id @default(cuid())
+  question        String
+  targetDate      DateTime
+  qYes            Float     @default(0)
+  qNo             Float     @default(0)
+  b               Float     @default(100)
+  resolved        Boolean   @default(false)
+  resolvedOutcome String?
+  resolvedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  prId        String      @unique
+  pullRequest PullRequest @relation(fields: [prId], references: [id], onDelete: Cascade)
+  trades      Trade[]
+  positions   Position[]
+}
+
+model Trade {
+  id        String   @id @default(cuid())
+  outcome   String
+  shares    Float
+  cost      Float
+  price     Float
+  createdAt DateTime @default(now())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marketId String
+  market   Market @relation(fields: [marketId], references: [id], onDelete: Cascade)
+}
+
+model Position {
+  id          String   @id @default(cuid())
+  sharesYes   Float    @default(0)
+  sharesNo    Float    @default(0)
+  realizedPnl Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marketId String
+  market   Market @relation(fields: [marketId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, marketId])
+}
+
+model Balance {
+  id        String   @id @default(cuid())
+  balance   Float    @default(1000) // Starting credits
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
