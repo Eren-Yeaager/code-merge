@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import prismaPlugin from "./plugins/prisma.js";
 import authRoutes from "./routes/auth.js";
 import "dotenv/config";
+import githubRoutes from "./routes/github.js";
 const fastify = Fastify({
   logger: true,
 });
@@ -14,6 +15,9 @@ await fastify.register(cors, {
 await fastify.register(prismaPlugin);
 
 await fastify.register(authRoutes);
+
+await fastify.register(githubRoutes);
+
 fastify.get("/health", async (request, reply) => {
   return { status: "ok", timestamp: new Date().toISOString() };
 });

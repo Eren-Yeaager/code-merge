@@ -81,12 +81,14 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
           githubLogin: githubUser.login,
           name: githubUser.name || null,
           avatarUrl: githubUser.avatar_url || null,
+          githubAccessToken: accessToken,
         },
         create: {
           githubId: githubUser.id,
           githubLogin: githubUser.login,
           name: githubUser.name || null,
           avatarUrl: githubUser.avatar_url || null,
+          githubAccessToken: accessToken,
         },
       });
 
